@@ -2,14 +2,6 @@
 
 Web-based code samples for the [Azure Speech Voice Live API](https://learn.microsoft.com/azure/ai-services/speech-service/voice-live-overview) featuring a shared React frontend and language-specific backends.
 
-## Screenshots
-
-| Start Screen | Settings Panel | Connecting | Agent Speaking | Listening |
-|:---:|:---:|:---:|:---:|:---:|
-| ![Start](img/screenshots/01-start-screen.png) | ![Settings](img/screenshots/02-settings-panel.png) | ![Connecting](img/screenshots/05-connecting.png) | ![Speaking](img/screenshots/06-session-active.png) | ![Listening](img/screenshots/07-session-state.png) |
-
-> 🎬 A video walkthrough is available at [`img/videos/voice-live-demo.webm`](img/videos/voice-live-demo.webm)
-
 ## Architecture
 
 ```
