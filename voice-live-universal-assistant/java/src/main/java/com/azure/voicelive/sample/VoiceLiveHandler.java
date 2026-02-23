@@ -19,10 +19,14 @@ import com.azure.ai.voicelive.models.AzureSemanticVadTurnDetection;
 import com.azure.ai.voicelive.models.AzureSemanticVadTurnDetectionEn;
 import com.azure.ai.voicelive.models.AzureSemanticVadTurnDetectionMultilingual;
 import com.azure.ai.voicelive.models.AzureStandardVoice;
+import com.azure.ai.voicelive.models.AssistantMessageItem;
+import com.azure.ai.voicelive.models.ClientEventResponseCreate;
 import com.azure.ai.voicelive.models.InputAudioFormat;
 import com.azure.ai.voicelive.models.InterimResponseTrigger;
 import com.azure.ai.voicelive.models.InputTextContentPart;
 import com.azure.ai.voicelive.models.InteractionModality;
+import com.azure.ai.voicelive.models.OutputTextContentPart;
+import com.azure.ai.voicelive.models.ResponseCreateParams;
 import com.azure.ai.voicelive.models.LlmInterimResponseConfig;
 import com.azure.ai.voicelive.models.OpenAIVoice;
 import com.azure.ai.voicelive.models.OpenAIVoiceName;
@@ -339,11 +343,12 @@ public class VoiceLiveHandler {
                     ? config.getGreetingText()
                     : "Welcome! I'm here to help you get started.";
 
-            // Use raw JSON for pre-generated greeting since the typed API doesn't accept ResponseCreateParams directly
-            String json = String.format(
-                    "{\"type\":\"response.create\",\"response\":{\"pre_generated_assistant_message\":{\"type\":\"message\",\"role\":\"assistant\",\"content\":[{\"type\":\"output_text\",\"text\":\"%s\"}]}}}",
-                    escapeJson(text));
-            session.send(BinaryData.fromString(json)).block();
+            OutputTextContentPart textContent = new OutputTextContentPart(text);
+            AssistantMessageItem assistantMessage = new AssistantMessageItem(List.of(textContent));
+            ResponseCreateParams responseParams = new ResponseCreateParams()
+                    .setPreGeneratedAssistantMessage(assistantMessage);
+
+            session.sendEvent(new ClientEventResponseCreate().setResponse(responseParams)).block();
 
             logger.info("[{}] Pre-generated greeting sent", clientId);
         } catch (Exception e) {
@@ -532,11 +537,4 @@ public class VoiceLiveHandler {
         sendMessage.accept(Map.of("type", type, key, value));
     }
 
-    private static String escapeJson(String text) {
-        return text.replace("\\", "\\\\")
-                   .replace("\"", "\\\"")
-                   .replace("\n", "\\n")
-                   .replace("\r", "\\r")
-                   .replace("\t", "\\t");
-    }
 }

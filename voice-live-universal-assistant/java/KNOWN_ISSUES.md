@@ -8,7 +8,7 @@ The following issues from beta.4 have been resolved:
 
 - ✅ **Interim Response** — `LlmInterimResponseConfig`, `StaticInterimResponseConfig`, and `InterimResponseTrigger` are now available. The backend fully supports interim response configuration from the frontend.
 - ✅ **Agent Configuration** — `AgentSessionConfig` with `client.startSession(agentConfig)` replaces the model-mode fallback. Agent name, project, version, conversation ID, and Foundry resource override are now sent to the service.
-- ✅ **Pre-generated Greeting** — Raw JSON workaround is retained for pre-generated greetings as the typed API still does not accept `ResponseCreateParams` with `pre_generated_assistant_message`. This is a minor convenience gap, not a functional limitation.
+- ✅ **Pre-generated Greeting** — Now uses the typed API (`ResponseCreateParams.setPreGeneratedAssistantMessage(AssistantMessageItem)`) with `OutputTextContentPart`. The raw JSON workaround from beta.4 has been removed.
 
 ## Remaining Issues
 
