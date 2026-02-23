@@ -98,9 +98,13 @@ public class Application implements WebMvcConfigurer {
 
     /**
      * SPA fallback — serve index.html for client-side routes.
-     * Only matches paths WITHOUT file extensions so /assets/*.js|css are served by the resource handler.
+     * Excludes: paths with file extensions, /api/*, /ws/*, /health, /config, /languages
      */
-    @GetMapping(value = {"/{path:[^\\.]*}", "/{path:[^\\.]*}/{sub:[^\\.]*}", "/{path:[^\\.]*}/{sub:[^\\.]*}/{rest:[^\\.]*}"})
+    @GetMapping(value = {
+        "/{path:(?!api|ws|health|config|languages|assets)[^\\.]*}",
+        "/{path:(?!api|ws|health|config|languages|assets)[^\\.]*}/{sub:[^\\.]*}",
+        "/{path:(?!api|ws|health|config|languages|assets)[^\\.]*}/{sub:[^\\.]*}/{rest:[^\\.]*}"
+    })
     public ResponseEntity<Resource> spaFallback() {
         return serveIndex();
     }
