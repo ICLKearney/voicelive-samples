@@ -59,6 +59,9 @@ param agentModelDeploymentName string = 'gpt-4.1-mini'
 @description('Agent name (used when createAgent=true)')
 param agentName string = 'voicelive-assistant'
 
+@description('Backend language for Dockerfile selection (e.g., python, csharp, java, javascript)')
+param backendLanguage string = 'python'
+
 // createAgent implies createFoundry
 var effectiveCreateFoundry = createFoundry || createAgent
 
@@ -89,17 +92,13 @@ module infrastructure 'main-infrastructure.bicep' = {
 var effectiveFoundryAccountName = !empty(foundryAccountName) ? foundryAccountName : 'ai-${resourceToken}'
 var effectiveFoundryProjectName = foundryProjectName
 
-// Model deployments: GPT-4.1-mini when createAgent, gpt-realtime for model mode (createFoundry only)
+// Model deployments: GPT-4.1-mini when createAgent (required for Foundry Agent).
+// Model-mode uses gpt-realtime which is routed server-side by the Voice Live service
+// and does NOT need a Cognitive Services model deployment.
 var modelDeployments = createAgent ? [
   {
     name: agentModelDeploymentName
     model: 'gpt-4.1-mini'
-    capacity: 1
-  }
-] : effectiveCreateFoundry ? [
-  {
-    name: 'gpt-realtime'
-    model: 'gpt-4o-realtime-preview'
     capacity: 1
   }
 ] : []
@@ -173,3 +172,6 @@ output CREATE_FOUNDRY string = string(effectiveCreateFoundry)
 output CREATE_AGENT string = string(createAgent)
 output AGENT_MODEL_DEPLOYMENT_NAME string = createAgent ? agentModelDeploymentName : ''
 output AGENT_NAME string = createAgent ? agentName : ''
+
+// Backend language selection
+output BACKEND_LANGUAGE string = backendLanguage

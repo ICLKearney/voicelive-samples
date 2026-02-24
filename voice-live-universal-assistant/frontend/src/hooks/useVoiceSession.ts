@@ -62,17 +62,26 @@ export function useVoiceSession() {
     fetch('/config')
       .then((res) => res.json())
       .then((cfg) => {
-        setSettings((prev) => ({
-          ...prev,
-          mode: cfg.mode || prev.mode,
-          model: cfg.model || prev.model,
-          voice: cfg.voice || prev.voice,
-          voiceType: cfg.voiceType || prev.voiceType,
-          transcribeModel: cfg.transcribeModel || prev.transcribeModel,
-          instructions: cfg.instructions ?? prev.instructions,
-          agentName: cfg.agentName || prev.agentName,
-          project: cfg.project || prev.project,
-        }));
+        setSettings((prev) => {
+          const merged = {
+            ...prev,
+            mode: cfg.mode || prev.mode,
+            model: cfg.model || prev.model,
+            voice: cfg.voice || prev.voice,
+            voiceType: cfg.voiceType || prev.voiceType,
+            transcribeModel: cfg.transcribeModel || prev.transcribeModel,
+            instructions: cfg.instructions ?? prev.instructions,
+            agentName: cfg.agentName || prev.agentName,
+            project: cfg.project || prev.project,
+          };
+          // Auto-correct transcribeModel for cascaded (text) models
+          const MULTIMODAL = ['gpt-realtime', 'gpt-realtime-mini', 'phi4-mm-realtime', 'phi4-mini'];
+          if (!MULTIMODAL.includes(merged.model) && merged.transcribeModel !== 'azure-speech') {
+            merged.transcribeModel = 'azure-speech';
+            merged.inputLanguage = '';
+          }
+          return merged;
+        });
       })
       .catch((err) => console.warn('Failed to fetch /config:', err));
 
@@ -226,9 +235,12 @@ export function useVoiceSession() {
           if (settings.greetingText) config.greeting_text = settings.greetingText;
         }
 
-        // Interim response
-        config.interim_response = settings.interimResponse;
-        if (settings.interimResponse) {
+        // Interim response — not supported for realtime models in model mode
+        const REALTIME_MODELS = ['gpt-realtime', 'gpt-realtime-mini', 'phi4-mm-realtime', 'phi4-mini'];
+        const effectiveInterim = settings.interimResponse
+          && !(settings.mode === 'model' && REALTIME_MODELS.includes(settings.model));
+        config.interim_response = effectiveInterim;
+        if (effectiveInterim) {
           config.interim_response_type = settings.interimResponseType;
           config.interim_trigger_tool = settings.interimTriggerTool;
           config.interim_trigger_latency = settings.interimTriggerLatency;

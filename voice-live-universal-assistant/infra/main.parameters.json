@@ -15,7 +15,7 @@
       "value": "${AZURE_VOICELIVE_API_KEY=}"
     },
     "voiceLiveMode": {
-      "value": "${VOICELIVE_MODE=agent}"
+      "value": "${VOICELIVE_MODE=model}"
     },
     "voiceLiveAgentName": {
       "value": "${AZURE_VOICELIVE_AGENT_NAME=}"
@@ -52,6 +52,9 @@
     },
     "agentName": {
       "value": "${AGENT_NAME=}"
+    },
+    "backendLanguage": {
+      "value": "${BACKEND_LANGUAGE=python}"
     }
   }
 }

@@ -45,8 +45,8 @@ Set `VOICELIVE_MODE` in `.env`:
 
 | Mode    | Description                                      |
 |---------|--------------------------------------------------|
-| `agent` | Connects via Foundry Agent Service (default)     |
-| `model` | Connects directly to a model (e.g. gpt-realtime) |
+| `model` | Connects directly to a model (e.g. gpt-realtime) — default |
+| `agent` | Connects via Foundry Agent Service               |
 
 ## Settings
 
@@ -68,6 +68,10 @@ All settings are configurable from the frontend UI. Default values can be set vi
 pip install pytest
 python -m pytest tests/ -v
 ```
+
+## Known Issues
+
+> **API version pinning:** The Python SDK defaults to the GA API version, which breaks `interim_response` and some agent features. The backend explicitly passes `api_version="2026-01-01-preview"` to `connect()` until this is fixed in a future SDK release.
 
 ## WebSocket Protocol
 

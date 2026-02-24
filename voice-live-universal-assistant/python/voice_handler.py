@@ -66,7 +66,7 @@ class SessionConfig:
     """
 
     # Connection / mode
-    mode: str = "agent"
+    mode: str = "model"
     model: str = "gpt-realtime"
     voice: str = "en-US-Ava:DragonHDLatestNeural"
     voice_type: str = "azure-standard"
@@ -314,6 +314,7 @@ class VoiceLiveHandler:
                     endpoint=self.endpoint,
                     credential=self.credential,
                     agent_config=agent_config,
+                    api_version="2026-01-01-preview",
                 ) as connection:
                     self.connection = connection
                     await self._configure_session(connection)
@@ -323,6 +324,7 @@ class VoiceLiveHandler:
                     endpoint=self.endpoint,
                     credential=self.credential,
                     model=self.config.model,
+                    api_version="2026-01-01-preview",
                     query={"profile": self.config.byom_profile} if self.config.byom_profile else None,
                 ) as connection:
                     self.connection = connection
