@@ -62,17 +62,26 @@ export function useVoiceSession() {
     fetch('/config')
       .then((res) => res.json())
       .then((cfg) => {
-        setSettings((prev) => ({
-          ...prev,
-          mode: cfg.mode || prev.mode,
-          model: cfg.model || prev.model,
-          voice: cfg.voice || prev.voice,
-          voiceType: cfg.voiceType || prev.voiceType,
-          transcribeModel: cfg.transcribeModel || prev.transcribeModel,
-          instructions: cfg.instructions ?? prev.instructions,
-          agentName: cfg.agentName || prev.agentName,
-          project: cfg.project || prev.project,
-        }));
+        setSettings((prev) => {
+          const merged = {
+            ...prev,
+            mode: cfg.mode || prev.mode,
+            model: cfg.model || prev.model,
+            voice: cfg.voice || prev.voice,
+            voiceType: cfg.voiceType || prev.voiceType,
+            transcribeModel: cfg.transcribeModel || prev.transcribeModel,
+            instructions: cfg.instructions ?? prev.instructions,
+            agentName: cfg.agentName || prev.agentName,
+            project: cfg.project || prev.project,
+          };
+          // Auto-correct transcribeModel for cascaded (text) models
+          const MULTIMODAL = ['gpt-realtime', 'gpt-realtime-mini', 'phi4-mm-realtime', 'phi4-mini'];
+          if (!MULTIMODAL.includes(merged.model) && merged.transcribeModel !== 'azure-speech') {
+            merged.transcribeModel = 'azure-speech';
+            merged.inputLanguage = '';
+          }
+          return merged;
+        });
       })
       .catch((err) => console.warn('Failed to fetch /config:', err));
 
