@@ -46,10 +46,10 @@ builder methods that return the appropriate SDK configuration objects:
 
 - `_getVoice()` → `{ type: "azure-standard"|"openai", name }` voice config
 - `_getTurnDetection()` → VAD config object
-- `_getTranscriptionOptions()` → transcription config
+- `_getTranscriptionOptions()` → transcription config (model mode only)
 - `_getInterimResponseConfig()` → interim response config or `null`
-- `_buildModelSessionConfig()` → full session config for model mode
-- `_buildAgentSessionConfig()` → full session config for agent mode
+- `_buildModelSessionConfig()` → full session config for model mode (includes transcription, temperature, instructions)
+- `_buildAgentSessionConfig()` → leaner session config for agent mode (voice, VAD, echo/noise, interim response only)
 
 ## WebSocket Protocol
 

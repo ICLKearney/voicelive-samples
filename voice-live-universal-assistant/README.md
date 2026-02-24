@@ -237,6 +237,7 @@ voice-live-universal-assistant/
 │   ├── VoiceLiveHandler.cs    # VoiceLiveHandler — SDK bridge
 │   ├── SessionConfig.cs       # Session configuration POCO
 │   ├── VoiceLiveWebApp.csproj # .NET project (Azure.AI.VoiceLive 1.1.0-beta.2)
+│   ├── KNOWN_ISSUES.md        # SDK feature gaps and workarounds
 │   ├── .env.sample            # Environment variable template
 │   └── README.md              # C#-specific docs
 ├── infra/                     # Azure Bicep IaC
@@ -274,17 +275,18 @@ azd env set AZURE_VOICELIVE_ENDPOINT "https://your-resource.cognitiveservices.az
 # Optional: choose backend language (default: python)
 azd env set BACKEND_LANGUAGE java   # python | java | javascript | csharp
 
-# Default mode is "model" — works out of the box with just an endpoint.
-# To use agent mode instead:
-azd env set VOICELIVE_MODE agent
-azd env set AZURE_VOICELIVE_AGENT_NAME "your-agent-name"
-azd env set AZURE_VOICELIVE_PROJECT "your-project-name"
-
 # Optional: API key (only if token auth is unavailable for your resource)
 azd env set AZURE_VOICELIVE_API_KEY "your-api-key"
 
 azd up
 ```
+
+> **Want agent mode instead?** See [Option 3](#option-3-with-agent--foundry--gpt-41-mini--foundry-agent) for a fully automated setup, or configure manually:
+> ```bash
+> azd env set VOICELIVE_MODE agent
+> azd env set AZURE_VOICELIVE_AGENT_NAME "your-agent-name"
+> azd env set AZURE_VOICELIVE_PROJECT "your-project-name"
+> ```
 
 This provisions:
 - **Container Apps Environment** with Log Analytics
@@ -393,13 +395,24 @@ The frontend and backend communicate over WebSocket at `/ws/{clientId}`.
 | Python  | `azure-ai-voicelive` | 1.0.0b1 | API version pinned to `2026-01-01-preview` in `connect()` — required for interim response and agent mode |
 | Java    | `azure-ai-voicelive` | 1.0.0-beta.5 | Service version pinned to `V2026_01_01_PREVIEW` — SDK defaults to GA which breaks agent/interim features. See [java/KNOWN_ISSUES.md](java/KNOWN_ISSUES.md) |
 | JavaScript | `@azure/ai-voicelive` | 1.0.0-beta.3 | API version pinned to `2026-01-01-preview` via client options. Node.js 20+ required |
-| C#      | `Azure.AI.VoiceLive` | 1.1.0-beta.2 | Service version pinned to `V2026_01_01_PREVIEW` via `VoiceLiveClientOptions` |
+| C#      | `Azure.AI.VoiceLive` | 1.1.0-beta.2 | Service version pinned to `V2026_01_01_PREVIEW`. Interim response not yet supported — see [csharp/KNOWN_ISSUES.md](csharp/KNOWN_ISSUES.md) |
 
 ### Frontend UX Guards
 
-- **Interim Response** is disabled (greyed out) when a realtime model is selected in model mode — it only works with agent mode or text models using cascaded pipelines (Azure Speech transcription).
+- **Interim Response** is disabled (greyed out) when a realtime model is selected in model mode — it only works with agent mode or text models using cascaded pipelines (Azure Speech transcription). **Note:** The C# backend silently ignores this setting regardless — see [csharp/KNOWN_ISSUES.md](csharp/KNOWN_ISSUES.md).
 - **Start Session** button is disabled when in agent mode and Agent Name or Project are empty, with a helper message directing the user to Settings.
 - **Transcription model** is auto-corrected to `azure-speech` when a text model is selected (cascaded pipelines only support `azure-speech`).
+
+### Backend Feature Matrix
+
+| Feature | Python | Java | JavaScript | C# |
+|---------|--------|------|------------|-----|
+| Model mode (realtime) | ✅ | ✅ | ✅ | ✅ |
+| Model mode (text/cascaded) | ✅ | ✅ | ✅ | ✅ |
+| Agent mode | ✅ | ✅ | ✅ | ✅ |
+| Interim response | ✅ | ✅ | ✅ | ❌ SDK gap |
+| Echo cancellation | ✅ | ✅ | ✅ | ✅ |
+| Noise reduction | ✅ | ✅ | ✅ | ✅ |
 
 ## License
 
