@@ -240,8 +240,10 @@ public class VoiceLiveHandler {
         options.setInputAudioFormat(InputAudioFormat.PCM16);
         options.setOutputAudioFormat(OutputAudioFormat.PCM16);
 
-        // Temperature
-        options.setTemperature(config.getTemperature());
+        // Temperature — model mode only (agent manages its own pipeline)
+        if ("model".equals(config.getMode())) {
+            options.setTemperature(config.getTemperature());
+        }
 
         // Instructions (model mode only)
         if ("model".equals(config.getMode()) && config.getInstructions() != null
@@ -258,16 +260,18 @@ public class VoiceLiveHandler {
                     new AudioNoiseReduction(AudioNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION));
         }
 
-        // Transcription
-        AudioInputTranscriptionOptions transcription = new AudioInputTranscriptionOptions(
-                AudioInputTranscriptionOptionsModel.fromString(config.getTranscribeModel()));
-        if (config.getInputLanguage() != null && !config.getInputLanguage().isBlank()) {
-            transcription.setLanguage(config.getInputLanguage());
+        // Transcription — model mode only (agent manages its own transcription pipeline)
+        if ("model".equals(config.getMode())) {
+            AudioInputTranscriptionOptions transcription = new AudioInputTranscriptionOptions(
+                    AudioInputTranscriptionOptionsModel.fromString(config.getTranscribeModel()));
+            if (config.getInputLanguage() != null && !config.getInputLanguage().isBlank()) {
+                transcription.setLanguage(config.getInputLanguage());
+            }
+            options.setInputAudioTranscription(transcription);
         }
-        options.setInputAudioTranscription(transcription);
 
-        // Interim response configuration
-        if (config.isInterimResponse()) {
+        // Interim response configuration — model mode only
+        if ("model".equals(config.getMode()) && config.isInterimResponse()) {
             java.util.List<InterimResponseTrigger> triggers = new java.util.ArrayList<>();
             if (config.isInterimTriggerLatency()) {
                 triggers.add(InterimResponseTrigger.LATENCY);
