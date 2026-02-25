@@ -255,7 +255,7 @@ voice-live-universal-assistant/
 │   │   └── postdeploy.ps1     # Foundry Agent creation (when createAgent=true)
 │   └── scripts/
 │       └── create_agent.py    # Agent creation with Voice Live metadata
-├── img/                       # UX mockup reference images
+├── tests/                     # E2E test suite (WebSocket + Playwright)
 └── README.md                  # This file
 ```
 
@@ -419,6 +419,45 @@ All backends pin the API version to `2026-01-01-preview` (the SDK defaults to GA
 ## Future Improvements
 
 - **Agent mode fail-fast:** When `mode=agent` but `agentName` or `projectName` are missing, the C# and Java backends silently fall back to model mode. The frontend already prevents this (Start button is disabled until both fields are set), but the backends should return an explicit error instead of downgrading. Python and JavaScript pass the config through and let the SDK validate.
+
+## Testing
+
+An E2E test suite is available in [`tests/e2e_all_backends.py`](tests/e2e_all_backends.py) covering all four backends with two test types:
+
+- **WebSocket tests** — connect directly to the backend WebSocket endpoint, send a `start_session` message, stream real WAV audio as PCM16 chunks, and verify that audio and transcript responses are received.
+- **Playwright browser tests** — open the frontend UI in a headless Chromium browser with a mocked microphone (oscillator tone), click Start, and verify the page loads, the voice orb renders, and a session becomes active.
+
+### Prerequisites
+
+```bash
+pip install websockets playwright
+python -m playwright install chromium
+```
+
+WebSocket tests require WAV audio files. Set `E2E_AUDIO_DIR` to a folder containing `.wav` files, or place them in the default path defined in the script.
+
+### Running Tests
+
+```bash
+cd voice-live-universal-assistant
+
+# All backends, both test types (model mode)
+python tests/e2e_all_backends.py
+
+# WebSocket tests only
+python tests/e2e_all_backends.py --ws-only
+
+# Playwright browser tests only
+python tests/e2e_all_backends.py --browser-only
+
+# Agent mode (default is model)
+python tests/e2e_all_backends.py --mode agent
+
+# Single backend URL
+python tests/e2e_all_backends.py --url https://your-backend.azurecontainerapps.io
+```
+
+Backend URLs are configured in the `BACKENDS` dictionary at the top of the test script. Update them to match your deployed environments.
 
 ## License
 
