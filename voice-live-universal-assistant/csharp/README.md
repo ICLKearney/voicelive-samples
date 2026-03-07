@@ -127,6 +127,6 @@ docker build -f Dockerfile.csharp -t voicelive-csharp .
 docker run -p 8000:8000 --env-file csharp/.env voicelive-csharp
 ```
 
-## Known Issues
+## Notes
 
-No known issues at this time.
+No C#-specific limitations at this time. All frontend features are supported.
