@@ -46,7 +46,7 @@ def main() -> None:
     voice_live_config = {
         "session": {
             "voice": {
-                "name": "en-US-Ava:DragonHDLatestNeural",
+                "name": "en-GB-SoniaNeural",
                 "type": "azure-standard",
                 "temperature": 0.8,
             },

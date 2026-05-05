@@ -89,7 +89,7 @@ VOICELIVE_MODE=model
 
 # Model mode settings (default — works with just a Foundry resource)
 VOICELIVE_MODEL=gpt-realtime
-VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
+VOICELIVE_VOICE=en-GB-SoniaNeural
 VOICELIVE_TRANSCRIBE_MODEL=gpt-4o-transcribe
 
 # Agent mode settings (when VOICELIVE_MODE=agent)

@@ -15,7 +15,7 @@ const DEFAULT_SETTINGS: VoiceSettings = {
   mode: 'model',
   model: 'gpt-realtime',
   voiceType: 'azure-standard',
-  voice: 'en-US-Ava:DragonHDLatestNeural',
+  voice: 'en-GB-SoniaNeural',
   instructions: 'You are a helpful AI assistant. Respond naturally and conversationally. Keep your responses concise but engaging.',
   temperature: 0.7,
   vadType: 'azure_semantic',

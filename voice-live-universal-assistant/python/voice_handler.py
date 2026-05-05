@@ -68,7 +68,7 @@ class SessionConfig:
     # Connection / mode
     mode: str = "model"
     model: str = "gpt-realtime"
-    voice: str = "en-US-Ava:DragonHDLatestNeural"
+    voice: str = "en-GB-SoniaNeural"
     voice_type: str = "azure-standard"
     instructions: str = ""
     temperature: float = 0.7

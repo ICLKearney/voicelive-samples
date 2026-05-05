@@ -55,7 +55,7 @@ All settings are configurable from the frontend UI. Default values can be set vi
 | Setting | Env Variable | Default |
 |---------|-------------|---------|
 | Model | `VOICELIVE_MODEL` | `gpt-realtime` |
-| Voice | `VOICELIVE_VOICE` | `en-US-Ava:DragonHDLatestNeural` |
+| Voice | `VOICELIVE_VOICE` | `en-GB-SoniaNeural` |
 | Temperature | `VOICELIVE_TEMPERATURE` | `0.7` |
 | VAD Type | `VOICELIVE_VAD_TYPE` | `azure_semantic` |
 | Instructions | `VOICELIVE_INSTRUCTIONS` | _(empty)_ |

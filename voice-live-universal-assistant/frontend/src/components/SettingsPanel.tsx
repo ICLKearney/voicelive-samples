@@ -13,14 +13,12 @@ const OPENAI_VOICES = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'sage', 'shimm
 
 // Azure Standard DragonHD voices (most common for realtime)
 const AZURE_DRAGON_HD_VOICES = [
-  'en-US-Ava:DragonHDLatestNeural',
-  'en-US-Andrew:DragonHDLatestNeural',
-  'en-US-Emma:DragonHDLatestNeural',
-  'en-US-Brian:DragonHDLatestNeural',
-  'en-US-Aria:DragonHDLatestNeural',
-  'en-US-Davis:DragonHDLatestNeural',
-  'en-US-Jenny:DragonHDLatestNeural',
-  'en-US-Steffan:DragonHDLatestNeural',
+  'en-GB-SoniaNeural',
+  'en-GB-RyanNeural',
+  'en-GB-LibbyNeural',
+  'en-GB-MaisieNeural',
+  'en-IE-EmilyNeural',
+  'en-IE-ConnorNeural',
 ];
 
 // Special sentinel for "type your own" in the voice dropdown
@@ -185,7 +183,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             value={settings.voiceType}
             onChange={(_e, data) => {
               const newType = data.value as 'openai' | 'azure-standard';
-              const defaultVoice = newType === 'openai' ? 'alloy' : 'en-US-Ava:DragonHDLatestNeural';
+              const defaultVoice = newType === 'openai' ? 'alloy' : 'en-GB-SoniaNeural';
               onUpdate({ voiceType: newType, voice: defaultVoice });
             }}
           >
@@ -235,7 +233,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   style={{ marginTop: 6 }}
                   value={settings.voice}
                   onChange={(_e, data) => onUpdate({ voice: data.value })}
-                  placeholder="e.g. en-US-JennyNeural"
+                  placeholder="e.g. en-GB-SoniaNeural"
                 />
               )}
             </>

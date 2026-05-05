@@ -51,7 +51,7 @@ export class VoiceHandler {
     try {
       const mode = this.config.mode || "model";
       const model = this.config.model || "gpt-realtime";
-      const voice = this.config.voice || "en-US-Ava:DragonHDLatestNeural";
+      const voice = this.config.voice || "en-GB-SoniaNeural";
 
       console.log(
         `[${this.clientId}] Connecting in ${mode} mode (model=${model}, voice=${voice})`
@@ -466,7 +466,7 @@ export class VoiceHandler {
   }
 
   _getVoice() {
-    const voiceName = this.config.voice || "en-US-Ava:DragonHDLatestNeural";
+    const voiceName = this.config.voice || "en-GB-SoniaNeural";
     const voiceType = this.config.voiceType || "azure-standard";
     if (voiceType === OPENAI_VOICE_TYPE) {
       return { type: "openai", name: voiceName };

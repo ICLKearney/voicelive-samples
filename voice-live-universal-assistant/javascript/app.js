@@ -63,7 +63,7 @@ app.get("/config", (_req, res) => {
     mode: process.env.VOICELIVE_MODE || "model",
     model: process.env.VOICELIVE_MODEL || "gpt-realtime",
     voice:
-      process.env.VOICELIVE_VOICE || "en-US-Ava:DragonHDLatestNeural",
+      process.env.VOICELIVE_VOICE || "en-GB-SoniaNeural",
     voiceType: process.env.VOICELIVE_VOICE_TYPE || "azure-standard",
     transcribeModel:
       process.env.VOICELIVE_TRANSCRIBE_MODEL || "gpt-4o-transcribe",
@@ -237,7 +237,7 @@ async function startSession(clientId, frontendConfig, ws) {
       voice:
         frontendConfig.voice ||
         process.env.VOICELIVE_VOICE ||
-        "en-US-Ava:DragonHDLatestNeural",
+        "en-GB-SoniaNeural",
       voiceType:
         frontendConfig.voice_type ||
         process.env.VOICELIVE_VOICE_TYPE ||

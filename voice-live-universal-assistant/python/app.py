@@ -111,7 +111,7 @@ async def get_config():
     return {
         "mode": os.getenv("VOICELIVE_MODE", "model"),
         "model": os.getenv("VOICELIVE_MODEL", "gpt-realtime"),
-        "voice": os.getenv("VOICELIVE_VOICE", "en-US-Ava:DragonHDLatestNeural"),
+        "voice": os.getenv("VOICELIVE_VOICE", "en-GB-SoniaNeural"),
         "voiceType": os.getenv("VOICELIVE_VOICE_TYPE", "azure-standard"),
         "transcribeModel": os.getenv("VOICELIVE_TRANSCRIBE_MODEL", "gpt-4o-transcribe"),
         "instructions": os.getenv("VOICELIVE_INSTRUCTIONS", "You are a helpful AI assistant. Respond naturally and conversationally. Keep your responses concise but engaging."),
@@ -252,7 +252,7 @@ async def _start_session(client_id: str, config: dict, websocket: WebSocket):
         session_config = SessionConfig(
             mode=config.get("mode", os.getenv("VOICELIVE_MODE", "model")),
             model=config.get("model", os.getenv("VOICELIVE_MODEL", "gpt-realtime")),
-            voice=config.get("voice", os.getenv("VOICELIVE_VOICE", "en-US-Ava:DragonHDLatestNeural")),
+            voice=config.get("voice", os.getenv("VOICELIVE_VOICE", "en-GB-SoniaNeural")),
             voice_type=config.get("voice_type", os.getenv("VOICELIVE_VOICE_TYPE", "azure-standard")),
             transcribe_model=config.get("transcribe_model", os.getenv("VOICELIVE_TRANSCRIBE_MODEL", "gpt-4o-transcribe")),
             input_language=config.get("input_language", ""),
