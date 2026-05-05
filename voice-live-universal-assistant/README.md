@@ -312,19 +312,45 @@ voice-live-universal-assistant/
 
 ## Deployment (Azure Developer CLI)
 
+### Prerequisites
+
+- [Azure Developer CLI (`azd`)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) installed
+- An Azure subscription with permissions to create resource groups, Container Apps, and ACR
+
+> **Recommended: deploy from [Azure Cloud Shell](https://shell.azure.com).**
+> Cloud Shell is already authenticated via your portal session and bypasses Conditional Access policies that block device-code / interactive login flows on local machines.
+
+#### Authentication setup (Cloud Shell — recommended)
+
+```bash
+# Tell azd to reuse the existing az CLI session — no separate login needed
+azd config set auth.useAzCliAuth true
+
+# Confirm the right subscription is active
+az account set --subscription "<your-subscription-id>"
+```
+
+#### Authentication setup (local machine)
+
+```bash
+az login          # standard browser login
+azd auth login    # separate azd session
+```
+
+---
+
 ### Option 1: Basic — Container App only (default)
 
 Deploys the web app connecting to your **existing** Azure AI Services resource in **model mode** (no agent required):
 
 ```bash
-azd auth login
 azd init
 
 # Required: set your Voice Live endpoint
 azd env set AZURE_VOICELIVE_ENDPOINT "https://your-resource.cognitiveservices.azure.com/"
 
 # Optional: choose backend language (default: python)
-azd env set BACKEND_LANGUAGE java   # python | java | javascript | csharp
+azd env set BACKEND_LANGUAGE python   # python | java | javascript | csharp
 
 # Optional: API key (only if token auth is unavailable for your resource)
 azd env set AZURE_VOICELIVE_API_KEY "your-api-key"
@@ -332,29 +358,28 @@ azd env set AZURE_VOICELIVE_API_KEY "your-api-key"
 azd up
 ```
 
-> **Want agent mode instead?** See [Option 3](#option-3-with-agent--foundry--gpt-41-mini--foundry-agent) for a fully automated setup, or configure manually:
-> ```bash
-> azd env set VOICELIVE_MODE agent
-> azd env set AZURE_VOICELIVE_AGENT_NAME "your-agent-name"
-> azd env set AZURE_VOICELIVE_PROJECT "your-project-name"
-> ```
-
 This provisions:
 - **Container Apps Environment** with Log Analytics
 - **Container Registry** (ACR cloud build — no local Docker required)
 - **Container App** with system-assigned managed identity
 - **RBAC** — Cognitive Services User for token-based auth
 
+> **Using an existing Foundry Agent?** Set these before `azd up` and the managed identity will also receive the **Azure AI Developer** role automatically:
+> ```bash
+> azd env set VOICELIVE_MODE agent
+> azd env set AZURE_VOICELIVE_AGENT_NAME "your-agent-name"
+> azd env set AZURE_VOICELIVE_PROJECT "your-project-name"
+> ```
+
 ### Option 2: With Foundry — Create AI Foundry + model mode
 
 Provisions a new AI Foundry resource with `gpt-realtime` model deployment and configures the app for **model mode** — no additional configuration required:
 
 ```bash
-azd auth login
 azd init
 azd env set CREATE_FOUNDRY true
 # Optional: choose backend language (default: python)
-azd env set BACKEND_LANGUAGE java
+azd env set BACKEND_LANGUAGE python
 azd up
 ```
 
@@ -370,7 +395,6 @@ This adds (fully automatic — no manual endpoint/model config needed):
 Full end-to-end: provisions Foundry, deploys GPT-4.1-mini, and creates an agent with Voice Live configuration — no additional configuration required:
 
 ```bash
-azd auth login
 azd init
 azd env set CREATE_AGENT true
 # Optional: customize agent name (default: voicelive-assistant)
@@ -385,6 +409,25 @@ This adds (fully automatic):
 - **GPT-4.1-mini** model deployment (for the agent)
 - **Foundry Agent** created via Python SDK with Voice Live session config (Azure voice, semantic VAD, noise suppression, echo cancellation)
 - Container App configured with agent name, project, and **agent mode**
+
+### Re-deploying to an existing environment
+
+If your `azd` environment was created on a different machine (e.g. switching to Cloud Shell), recreate it and set the required values before deploying:
+
+```bash
+azd env new <env-name>
+azd env set AZURE_SUBSCRIPTION_ID "<subscription-id>"
+azd env set AZURE_LOCATION "<location>"           # e.g. swedencentral
+azd env set BACKEND_LANGUAGE python
+azd env set AZURE_VOICELIVE_ENDPOINT "https://your-resource.services.ai.azure.com/"
+
+# Agent mode (if applicable)
+azd env set VOICELIVE_MODE agent
+azd env set AZURE_VOICELIVE_AGENT_NAME "your-agent-name"
+azd env set AZURE_VOICELIVE_PROJECT "your-project-name"
+
+azd up
+```
 
 ### Deployment parameters
 
