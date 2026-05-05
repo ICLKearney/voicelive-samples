@@ -4,7 +4,7 @@
 FROM node:18-alpine AS frontend-build
 WORKDIR /build
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci --ignore-scripts
+RUN if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts; fi
 COPY frontend/ ./
 RUN chmod +x node_modules/.bin/* && npm run build
 

@@ -10,15 +10,39 @@ $ErrorActionPreference = "Stop"
 # Prevent Azure CLI (colorama) from crashing on Unicode output (e.g., vite's ✓)
 $env:PYTHONUTF8 = "1"
 
+function Get-AzdEnvValue {
+    param([Parameter(Mandatory = $true)][string]$Key)
+
+    $value = azd env get-value $Key 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        return $null
+    }
+
+    if ($null -eq $value) {
+        return $null
+    }
+
+    $trimmed = ($value | Out-String).Trim()
+    if (-not $trimmed) {
+        return $null
+    }
+
+    return $trimmed
+}
+
 # Read azd env values
-$acrName = azd env get-value AZURE_CONTAINER_REGISTRY_NAME 2>$null
-$envName = azd env get-value AZURE_ENV_NAME 2>$null
-$rgName = azd env get-value AZURE_RESOURCE_GROUP_NAME 2>$null
-$appName = azd env get-value AZURE_CONTAINER_APP_NAME 2>$null
+$acrName = Get-AzdEnvValue -Key "AZURE_CONTAINER_REGISTRY_NAME"
+$envName = Get-AzdEnvValue -Key "AZURE_ENV_NAME"
+$rgName = Get-AzdEnvValue -Key "AZURE_RESOURCE_GROUP_NAME"
+$appName = Get-AzdEnvValue -Key "AZURE_CONTAINER_APP_NAME"
 
 # Determine backend language and corresponding Dockerfile
-$backendLang = (azd env get-value BACKEND_LANGUAGE 2>$null)
+$backendLang = Get-AzdEnvValue -Key "BACKEND_LANGUAGE"
 if (-not $backendLang) { $backendLang = "python" }
+if ($backendLang -notin @("python", "javascript", "java", "csharp")) {
+    Write-Host "Unknown BACKEND_LANGUAGE '$backendLang', defaulting to 'python'."
+    $backendLang = "python"
+}
 $dockerfile = "Dockerfile.$backendLang"
 
 if (-not $acrName) {
