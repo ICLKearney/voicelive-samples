@@ -113,20 +113,6 @@ body {
   height: 100%;
 }
 
-/* ─── Badge — grid-positioned, reference .builtWithBadge ─── */
-.builtWithBadge {
-  grid-column: 1;
-  grid-row: 1;
-  place-self: end start;
-  margin-right: 8px;
-}
-
-@container (width <= 768px) {
-  .builtWithBadge {
-    display: none;
-  }
-}
-
 /* ─── Waves container — reference .wavesContainer ─── */
 .wavesContainer {
   pointer-events: none;
@@ -163,11 +149,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 3px;
-}
-
-/* ─── Badge hover ─── */
-a[aria-label="Built with Microsoft Foundry"]:hover {
-  opacity: 1 !important;
 }
 
 /* ─── Animations ─── */

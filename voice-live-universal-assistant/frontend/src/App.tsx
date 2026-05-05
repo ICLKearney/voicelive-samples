@@ -14,7 +14,6 @@ import { ChatInput } from './components/ChatInput';
 import { Waves } from './components/Waves';
 import { SettingsPanel } from './components/SettingsPanel';
 import { ErrorBanner } from './components/ErrorBanner';
-import { BuiltWithBadge } from './components/BuiltWithBadge';
 import { VoiceOrb } from './components/VoiceOrb';
 
 const App: React.FC = () => {
@@ -158,8 +157,6 @@ const App: React.FC = () => {
               </div>
             )}
           </div>
-
-          <BuiltWithBadge className="builtWithBadge" />
         </div>
 
         <SettingsPanel isOpen={settingsOpen} settings={settings} onUpdate={updateSettings} onClose={() => setSettingsOpen(false)} azureSpeechLocales={azureSpeechLocales} theme={theme} onThemeChange={setTheme} />
