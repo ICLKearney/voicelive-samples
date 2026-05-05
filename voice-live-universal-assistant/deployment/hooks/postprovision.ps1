@@ -16,6 +16,7 @@ $createFoundry = azd env get-value CREATE_FOUNDRY 2>$null
 $createAgent = azd env get-value CREATE_AGENT 2>$null
 $foundryAccountName = azd env get-value FOUNDRY_ACCOUNT_NAME 2>$null
 $rgName = azd env get-value AZURE_RESOURCE_GROUP_NAME 2>$null
+$voiceLiveMode = azd env get-value VOICELIVE_MODE 2>$null
 
 # createAgent implies createFoundry
 $effectiveCreateFoundry = ($createFoundry -eq "true") -or ($createAgent -eq "true")
@@ -44,13 +45,20 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "  [SKIP] Role assignment may already exist (safe to ignore)"
 }
 
-# When Foundry was provisioned, also assign Azure AI Developer for agent/model access
-if ($effectiveCreateFoundry -and $foundryAccountName) {
+# Agent mode also needs Azure AI Developer for existing Foundry projects.
+# When we provision Foundry, scope the role to that account. Otherwise fall back
+# to the subscription so existing external Foundry accounts can be accessed.
+$needsAiDeveloperRole = $effectiveCreateFoundry -or ($voiceLiveMode -eq "agent")
+if ($needsAiDeveloperRole) {
     Write-Host ""
     Write-Host "===== Foundry RBAC: Azure AI Developer ====="
 
     $aiDeveloperRole = "64702f94-c441-49e6-a78b-ef80e0188fee"
-    $accountScope = "/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.CognitiveServices/accounts/$foundryAccountName"
+    if ($foundryAccountName -and $rgName) {
+        $accountScope = "/subscriptions/$subscriptionId/resourceGroups/$rgName/providers/Microsoft.CognitiveServices/accounts/$foundryAccountName"
+    } else {
+        $accountScope = "/subscriptions/$subscriptionId"
+    }
 
     Write-Host "  Scope: $accountScope"
 
